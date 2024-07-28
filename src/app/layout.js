@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import "./style.css";
 export const metadata = {
   title: "Tic-Tac-Toe",
@@ -7,7 +8,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+      </body>
     </html>
   );
 }

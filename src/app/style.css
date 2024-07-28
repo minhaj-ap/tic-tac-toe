@@ -3,11 +3,16 @@
   margin: 0;
   font-family: sans-serif;
 }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 .header {
   background: #4d80e4;
   padding: 2em;
   display: grid;
   place-content: center;
+  height: 8vh;
 }
 
 section {
@@ -53,4 +58,60 @@ section > div {
 }
 .home_buttons div {
   border-radius: 4px;
+}
+.multi_home {
+  text-align: center;
+  display: grid;
+  place-content: center;
+  gap: 1em;
+  background-color: #03aed2;
+  height: 85vh;
+}
+.multi_home > strong {
+  font-size: 2.5em;
+  color: white;
+}
+.currPlayer {
+  color: white;
+  border-bottom: 2px solid;
+}
+.cells {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 300px;
+  height: 300px;
+  border: 1px solid #fdde55;
+  padding: 1em;
+  border-radius: 4px;
+  background-color: #fdde55;
+}
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+  font-size: 24px;
+  cursor: pointer;
+  color: black;
+  font-weight: bold;
+}
+.play_options {
+  display: flex;
+  justify-content: space-between;
+}
+.play_options button {
+  width: 9em;
+  padding: 1em;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  font-weight: 900;
+}
+#play_again {
+  background-color: limegreen;
+}
+#new_game {
+  background-color: darkorange;
 }
