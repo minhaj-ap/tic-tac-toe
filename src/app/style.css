@@ -115,3 +115,7 @@ section > div {
 #new_game {
   background-color: darkorange;
 }
+.win-cells {
+  background-color: green;
+  color: white;
+}
