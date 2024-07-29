@@ -9,22 +9,22 @@ let winningCombinations = [
   [0, 4, 8],
 ];
 function checkWin(selections) {
-  if (selections && selections.length >= 3) {
-    for (let i = 0; i < selections.length; i++) {
-      for (let j = 0; j < winningCombinations.length; j++) {
-        if (selections[i] === winningCombinations[j][0]) {
-          for (let k = 0; k < winningCombinations[j].length; k++) {
-            if (selections[k] === winningCombinations[j][1]) {
-              for (let l = 0; l < winningCombinations[j].length; l++) {
-                if (selections[l] === winningCombinations[j][2]) {
-                  return winningCombinations[j];
-                }
-              }
-            }
-          }
+  for (let i = 0; i < winningCombinations.length; i++) {
+    let combination = winningCombinations[i];
+    let matchCount = 0;
+
+    for (let j = 0; j < combination.length; j++) {
+      for (let k = 0; k < selections.length; k++) {
+        if (combination[j] === selections[k]) {
+          matchCount++;
+          break;
         }
       }
     }
+    if (matchCount === 3) {
+      return combination;
+    }
   }
+  return null;
 }
 export { checkWin };
