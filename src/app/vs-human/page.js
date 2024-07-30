@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { checkWin } from "@/logics/winningLogic";
+import Lottie from "lottie-react";
+import Celebration from "../celebration.json";
 export default function MultiPlayer() {
   const [CurrentPlayer, setCurrentPlayer] = useState("X");
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -11,6 +13,7 @@ export default function MultiPlayer() {
   const [winState, setWinState] = useState(false);
   const cellsRef = useRef([]);
   function handleClick(index) {
+    if (winState) return;
     setBoard((prevBoard) => {
       if (!prevBoard[index]) {
         const newBoard = [...prevBoard];
@@ -55,8 +58,20 @@ export default function MultiPlayer() {
   }
   return (
     <div className="multi_home">
-      {winState ? <h1>{CurrentPlayer === "X" ? "O" : "X"} won!!!</h1> : ""}
-
+      {winState ? (
+        <>
+          <h1 style={{ color: "white", fontSize: "5em" }}>
+            {CurrentPlayer === "X" ? "O" : "X"} won!!!
+          </h1>
+          <Lottie
+            style={{ position: "fixed", pointerEvents: "none" }}
+            animationData={Celebration}
+            loop={true}
+          />
+        </>
+      ) : (
+        ""
+      )}
       {!winState && (
         <strong>
           Current Player: <span className="currPlayer">{CurrentPlayer}</span>
