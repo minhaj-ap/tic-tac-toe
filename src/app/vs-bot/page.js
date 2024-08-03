@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { checkWin } from "@/logics/winningLogic";
 import { botMove } from "@/logics/botMoveLogic";
 import Lottie from "lottie-react";
@@ -12,8 +12,6 @@ export default function BotPlayer() {
   const [OsSelections, setOsSelections] = useState([]);
   const [winState, setWinState] = useState(false);
   const cellsRef = useRef([]);
-  let Move = botMove(board);
-
   function handleUser(index) {
     if (CurrentPlayer === "X") {
       if (board[index] === "") {
@@ -22,34 +20,35 @@ export default function BotPlayer() {
           newBoard[index] = CurrentPlayer;
           return newBoard;
         });
+        setCurrentPlayer("O");
       }
-      setCurrentPlayer("O");
       return board;
     }
   }
+  useEffect(()=>{
+    
+  },[])
+  const aiMove = useCallback(async () => {
+    if (CurrentPlayer === "O") {
+      const Move = await botMove(board, 0, true);
+      console.log(Move);
+      setBoard((prev) => {
+        const newBoard = [...prev];
+        newBoard[Move.move] = "O";
+        return newBoard;
+      });
+      setCurrentPlayer("X");
+    }
+  }, [board,CurrentPlayer]);
+
   if (CurrentPlayer === "O") {
-    setBoard((prev) => {
-      const newBoard = [...prev];
-      newBoard[Move] = "O";
-      return newBoard;
+    aiMove().then(() => {
+      setCurrentPlayer("X");
     });
-    setCurrentPlayer("X");
   }
 
-  function TriggerWinCheck() {
-    setCurrentPlayer(CurrentPlayer === "X" ? "O" : "X");
-    const result = checkWin(
-      CurrentPlayer === "X" ? XsSelections : OsSelections
-    );
-    if (result) {
-      setWinState(true);
-      result.map((id) => {
-        document.getElementById(id).classList.add("win-cells");
-      });
-    }
-  }
   function handleReset() {
-    setBoard(Array(9).fill(null));
+    setBoard(Array(9).fill(""));
     setCurrentPlayer("X");
     setXsSelections([]);
     setOsSelections([]);
@@ -66,7 +65,7 @@ export default function BotPlayer() {
       {winState ? (
         <>
           <h1 style={{ color: "white", fontSize: "5em" }}>
-            {CurrentPlayer === "X" ? "O" : "X"} won!!!
+            {CurrentPlayer === "X" ? "YOU" : "AI"} won!!!
           </h1>
           <Lottie
             style={{ position: "fixed", pointerEvents: "none" }}
