@@ -119,3 +119,9 @@ section > div {
   background-color: green;
   color: white;
 }
+.ai_loss {
+  font-size: 4em;
+  background-color: white;
+  padding: 2px 8px;
+  border-radius: 6px;
+}

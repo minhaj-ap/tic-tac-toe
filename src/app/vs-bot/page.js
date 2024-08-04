@@ -60,7 +60,15 @@ export default function BotPlayer() {
     <div className="multi_home">
       {winState !== "" && winState !== "tie" ? (
         <>
-          <h1 style={{ color: "white", fontSize: "4em" }}>{winState} WON!!!</h1>
+          <h1
+            style={{
+              color: winState === "O" ? "red" : "green",
+              fontSize: "4em",
+            }}
+            className="ai_loss"
+          >
+            {winState === "O" ? "YOU LOSE" : "YOU WON"}
+          </h1>
         </>
       ) : (
         ""
