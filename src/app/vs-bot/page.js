@@ -1,18 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { checkWin } from "@/logics/winningLogic";
-import { botMove } from "@/logics/botMoveLogic";
-import Lottie from "lottie-react";
-import Celebration from "../celebration.json";
+import { botMove, winLogic } from "@/logics/Logics";
 export default function BotPlayer() {
   const [CurrentPlayer, setCurrentPlayer] = useState("X");
   const [board, setBoard] = useState(Array(9).fill(""));
-  const [XsSelections, setXsSelections] = useState([]);
-  const [OsSelections, setOsSelections] = useState([]);
-  const [winState, setWinState] = useState(false);
+  const [winState, setWinState] = useState("");
   const cellsRef = useRef([]);
   function handleUser(index) {
+    if (winState) return;
     if (CurrentPlayer === "X") {
       if (board[index] === "") {
         setBoard((prev) => {
@@ -25,34 +21,34 @@ export default function BotPlayer() {
       return board;
     }
   }
-  useEffect(()=>{
-    
-  },[])
-  const aiMove = useCallback(async () => {
-    if (CurrentPlayer === "O") {
-      const Move = await botMove(board, 0, true);
-      console.log(Move);
-      setBoard((prev) => {
-        const newBoard = [...prev];
-        newBoard[Move.move] = "O";
-        return newBoard;
+  useEffect(() => {
+    const result = winLogic(board);
+    console.log(result);
+    if (result) {
+      setWinState(result.winner);
+      result.combination.map((id) => {
+        document.getElementById(id).classList.add("win-cells");
       });
-      setCurrentPlayer("X");
     }
-  }, [board,CurrentPlayer]);
+  }, [CurrentPlayer, board]);
+  const aiMove = useCallback(async () => {
+    const Move = await botMove(board, 0, true);
+    setBoard((prev) => {
+      const newBoard = [...prev];
+      newBoard[Move.move] = "O";
+      return newBoard;
+    });
+    setCurrentPlayer("X");
+  }, [board]);
 
   if (CurrentPlayer === "O") {
-    aiMove().then(() => {
-      setCurrentPlayer("X");
-    });
+    aiMove();
   }
 
   function handleReset() {
     setBoard(Array(9).fill(""));
     setCurrentPlayer("X");
-    setXsSelections([]);
-    setOsSelections([]);
-    setWinState(false);
+    setWinState("");
     const winCells = document.getElementsByClassName("win-cells");
     Array.from(winCells).forEach((element) => {
       element.classList.remove("win-cells");
@@ -62,19 +58,15 @@ export default function BotPlayer() {
   }
   return (
     <div className="multi_home">
-      {winState ? (
+      {winState !== "" && winState !== "tie" ? (
         <>
-          <h1 style={{ color: "white", fontSize: "5em" }}>
-            {CurrentPlayer === "X" ? "YOU" : "AI"} won!!!
-          </h1>
-          <Lottie
-            style={{ position: "fixed", pointerEvents: "none" }}
-            animationData={Celebration}
-            loop={true}
-          />
+          <h1 style={{ color: "white", fontSize: "4em" }}>{winState} WON!!!</h1>
         </>
       ) : (
         ""
+      )}
+      {winState === "tie" && (
+        <h1 style={{ color: "white", fontSize: "4em" }}>IT&apos;S A TIE!!!</h1>
       )}
       <div className="cells">
         {board.map((value, index) => (
