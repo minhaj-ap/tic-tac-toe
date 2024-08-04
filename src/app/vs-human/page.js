@@ -1,23 +1,22 @@
 "use client";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { checkWin } from "@/logics/winningLogic";
 import Lottie from "lottie-react";
 import Celebration from "../celebration.json";
+import { winLogic } from "@/logics/Logics";
 export default function MultiPlayer() {
   const [CurrentPlayer, setCurrentPlayer] = useState("X");
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [XsSelections, setXsSelections] = useState([]);
-  const [OsSelections, setOsSelections] = useState([]);
+  const [board, setBoard] = useState(Array(9).fill(""));
   const [lastMove, setLastMove] = useState(null);
-  const [winState, setWinState] = useState(false);
+  const [GameState, setGameState] = useState("");
   const cellsRef = useRef([]);
   function handleClick(index) {
-    if (winState) return;
+    if (GameState) return;
     setBoard((prevBoard) => {
       if (!prevBoard[index]) {
         const newBoard = [...prevBoard];
         newBoard[index] = CurrentPlayer;
+        setCurrentPlayer(CurrentPlayer === "X" ? "O" : "X");
         return newBoard;
       }
       return prevBoard;
@@ -26,29 +25,25 @@ export default function MultiPlayer() {
   }
   useEffect(() => {
     if (lastMove !== null) {
-      TriggerWinCheck(lastMove);
+      TriggerWinCheck();
     }
     setLastMove(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastMove]);
   function TriggerWinCheck() {
-    setCurrentPlayer(CurrentPlayer === "X" ? "O" : "X");
-    const result = checkWin(
-      CurrentPlayer === "X" ? XsSelections : OsSelections
-    );
+    const result = winLogic(board);
+    console.log(result);
     if (result) {
-      setWinState(true);
-      result.map((id) => {
+      setGameState(result.winner);
+      result.combination.map((id) => {
         document.getElementById(id).classList.add("win-cells");
       });
     }
   }
   function handleReset() {
-    setBoard(Array(9).fill(null));
+    setBoard(Array(9).fill(""));
     setCurrentPlayer("X");
-    setXsSelections([]);
-    setOsSelections([]);
-    setWinState(false);
+    setGameState("");
     const winCells = document.getElementsByClassName("win-cells");
     Array.from(winCells).forEach((element) => {
       element.classList.remove("win-cells");
@@ -58,7 +53,7 @@ export default function MultiPlayer() {
   }
   return (
     <div className="multi_home">
-      {winState ? (
+      {GameState !== "" && GameState !== "tie" ? (
         <>
           <h1 style={{ color: "white", fontSize: "5em" }}>
             {CurrentPlayer === "X" ? "O" : "X"} won!!!
@@ -72,7 +67,12 @@ export default function MultiPlayer() {
       ) : (
         ""
       )}
-      {!winState && (
+      {GameState === "tie" ? (
+        <h1 style={{ color: "white", fontSize: "4em" }}>IT&apos;S A TIE!!!</h1>
+      ) : (
+        ""
+      )}
+      {GameState === "" && (
         <strong>
           Current Player: <span className="currPlayer">{CurrentPlayer}</span>
         </strong>
@@ -84,12 +84,6 @@ export default function MultiPlayer() {
             className="cell"
             ref={(el) => (cellsRef.current[index] = el)}
             onClick={() => {
-              if (CurrentPlayer === "X") {
-                setXsSelections([...XsSelections, index]);
-              }
-              if (CurrentPlayer === "O") {
-                setOsSelections([...OsSelections, index]);
-              }
               handleClick(index);
             }}
             id={index}

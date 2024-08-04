@@ -3,22 +3,25 @@ function botMove(board, depth, isBotOption) {
   const scores = { O: 1, X: -1, tie: 0 };
   const winner = winLogic(board);
   if (winner !== null) {
-    return { score: scores[winner], move: null };
+    return {
+      score: scores[winner.winner],
+      move: null,
+      combination: winner.combination,
+    };
   }
 
-  if (isBoardFull(board)) {
-    return { score: scores["tie"], move: null };
-  }
+  // if (isBoardFull(board)) {
+  //   return { score: scores["tie"], move: null };
+  // }
 
   let bestScore = isBotOption ? -Infinity : Infinity;
   let bestMove = null;
-
+  let combination;
   for (i = 0; i < board.length; i++) {
     if (board[i] === "") {
       board[i] = isBotOption ? "O" : "X";
       const result = botMove(board, depth + 1, !isBotOption);
       board[i] = "";
-
       if (isBotOption) {
         if (result.score > bestScore) {
           bestScore = result.score;
@@ -30,10 +33,17 @@ function botMove(board, depth, isBotOption) {
           bestMove = i;
         }
       }
+      if (result.combination) {
+        combination = result.combination;
+      }
     }
   }
 
-  return { score: bestScore, move: bestMove };
+  return {
+    score: bestScore,
+    move: bestMove,
+    combination: combination ? combination : [],
+  };
 }
 
 function winLogic(board) {
@@ -47,11 +57,11 @@ function winLogic(board) {
     [2, 4, 6],
     [0, 4, 8],
   ];
-
+  if (isBoardFull(board)) return { winner: "tie", combination: [] };
   for (const pattern of winningCombinations) {
     const [a, b, c] = pattern;
     if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
+      return { winner: board[a], combination: pattern };
     }
   }
 
@@ -61,4 +71,4 @@ function winLogic(board) {
 function isBoardFull(board) {
   return board.every((cell) => cell !== "");
 }
-export { botMove };
+export { botMove, winLogic };
