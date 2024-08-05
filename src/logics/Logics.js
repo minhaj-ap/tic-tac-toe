@@ -10,9 +10,9 @@ function botMove(board, depth, isBotOption) {
     };
   }
 
-  // if (isBoardFull(board)) {
-  //   return { score: scores["tie"], move: null };
-  // }
+ if (isBoardFull(board)) {
+     return { score: scores["tie"], move: null };
+   }
 
   let bestScore = isBotOption ? -Infinity : Infinity;
   let bestMove = null;
@@ -57,14 +57,14 @@ function winLogic(board) {
     [2, 4, 6],
     [0, 4, 8],
   ];
-  if (isBoardFull(board)) return { winner: "tie", combination: [] };
+  
   for (const pattern of winningCombinations) {
     const [a, b, c] = pattern;
     if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
       return { winner: board[a], combination: pattern };
     }
   }
-
+if (isBoardFull(board)) return { winner: "tie", combination: [] };
   return null;
 }
 
