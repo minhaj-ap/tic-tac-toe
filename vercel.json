@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tic-tac-toe-coral-five-65.vercel.app/"
+        }
+      ],
+      "destination": "https://tic-tac-toe.minhajap.xyz",
+      "permanent": true
+    }
+  ]
+}
